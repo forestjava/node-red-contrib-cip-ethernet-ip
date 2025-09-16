@@ -1,6 +1,6 @@
 {
-    "name": "node-red-contrib-cip-st-ethernet-ip",
-    "version": "2.0.3",
+    "name": "@greact/node-red-contrib-cip-ethernet-ip",
+    "version": "0.0.1",
     "description": "A Node-RED node to interact with Allen Bradley / Rockwell PLCs using the EtherNet/IP Protocol",
     "main": "index.js",
     "dependencies": {
@@ -8,11 +8,9 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/SerafinTech/node-red-contrib-cip-st-ethernet-ip.git"
+        "url": "https://github.com/forestjava/node-red-contrib-cip-ethernet-ip.git"
     },
-    "bugs": {
-        "url": "https://github.com/SerafinTech/node-red-contrib-cip-st-ethernet-ip/issues"
-    },
+    "homepage": "https://github.com/forestjava/node-red-contrib-cip-ethernet-ip#readme",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -38,6 +36,10 @@
             "ethernet-ip": "red/ethernet-ip.js"
         }
     },
-    "author": "ST-One Ltda.",
+    "author": {
+        "name": "Nikita Biziaev",
+        "email": "cap7goo@gmail.com",
+        "url": "https://github.com/forestjava"
+    },
     "license": "GPL-3.0-or-later"
 }
