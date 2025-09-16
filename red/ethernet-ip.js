@@ -213,12 +213,8 @@ module.exports = function (RED) {
             const scanInterval = parseInt(config.cycletime) || 1000;
             cycleTimer = setInterval(async () => {
                 if (connected && !closing) {
-                    // Принудительная генерация событий Changed
-                    tags.forEach(tag => {
-                        if (tag && tag.value !== undefined) {
-                            onTagChanged(tag, tag.value);
-                        }
-                    });
+                    // Принудительная генерация события #__ALL_CHANGED__
+                    node.emit('#__ALL_CHANGED__');
                 }
             }, scanInterval);
         }
