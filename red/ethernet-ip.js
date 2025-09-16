@@ -204,6 +204,7 @@ module.exports = function (RED) {
         async function onConnect() {
             console.log('onConnect() - typeof plc.scan:', typeof plc.scan);
             console.log('onConnect() - typeof plc.scan_rate:', typeof plc.scan_rate);
+            console.log('onConnect() - typeof plc.startScan:', typeof plc.startScan);
             createTags();
             connected = true;
             manageStatus('online');
@@ -211,15 +212,13 @@ module.exports = function (RED) {
             // сканирование через setInterval
             const scanInterval = parseInt(config.cycletime) || 1000;
             cycleTimer = setInterval(async () => {
-                if (connected && !closing && plc) {
-                    try {
-                        // Принудительное чтение всех тегов
-                        for (let tag of tags.values()) {
-                            await plc.readTag(tag);
+                if (connected && !closing) {
+                    // Принудительная генерация событий Changed
+                    tags.forEach(tag => {
+                        if (tag && tag.value !== undefined) {
+                            onTagChanged(tag, tag.value);
                         }
-                    } catch (err) {
-                        node.error(`Cycle scan error: ${err.message}`);
-                    }
+                    });
                 }
             }, scanInterval);
         }
