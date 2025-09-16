@@ -207,6 +207,21 @@ module.exports = function (RED) {
             createTags();
             connected = true;
             manageStatus('online');
+
+            // сканирование через setInterval
+            const scanInterval = parseInt(config.cycletime) || 1000;
+            cycleTimer = setInterval(async () => {
+                if (connected && !closing && plc) {
+                    try {
+                        // Принудительное чтение всех тегов
+                        for (let tag of tags.values()) {
+                            await plc.readTag(tag);
+                        }
+                    } catch (err) {
+                        node.error(`Cycle scan error: ${err.message}`);
+                    }
+                }
+            }, scanInterval);
         }
 
 
@@ -223,6 +238,12 @@ module.exports = function (RED) {
             manageStatus('offline');
             connected = false;
             closing = true;
+
+            // Очистка таймера сканирования
+            if (cycleTimer) {
+                clearInterval(cycleTimer);
+                cycleTimer = null;
+            }
 
             for (let tag of tags.values()) {
                 tag.removeListener('Initialized', onTagChanged);
