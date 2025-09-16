@@ -3,10 +3,6 @@
 A Node-RED node to interact with Allen Bradley / Rockwell PLCs using the EtherNet/IP protocol.
 Based on the awesome work of [cmseaton42/node-ethernet-ip](https://github.com/cmseaton42/node-ethernet-ip).
 
-This node was created as part of the [ST-One](https://st-one.io) project.
-
-## Acknowledgments
-
 Special thanks to [@SerafinTech](https://github.com/SerafinTech) for the original development and maintenance of this Node-RED contribution. This project builds upon their excellent work in creating a robust EtherNet/IP integration for Node-RED.
 
 ## Install

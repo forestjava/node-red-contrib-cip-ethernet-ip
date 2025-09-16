@@ -30,7 +30,7 @@ module.exports = function (RED) {
 
     function generateStatus(status, val) {
         let obj;
-        
+
         if (typeof val != 'string' && typeof val != 'number' && typeof val != 'boolean') {
             val = RED._("ethip.endpoint.status.online");
         }
@@ -113,7 +113,7 @@ module.exports = function (RED) {
 
         function createTags() {
             if (plc) {
-                
+
 
                 for (const prog of Object.keys(config.vartable)) {
 
@@ -183,7 +183,7 @@ module.exports = function (RED) {
             if (status == newStatus) return;
 
             status = newStatus;
-            
+
             node.emit('#__STATUS__', {
                 status: status
             });
@@ -198,10 +198,12 @@ module.exports = function (RED) {
             node.emit('#__CHANGED__', tag, lastValue);
             tagChanged = true;
             node.emit('#__ALL_CHANGED__');
-            tagChanged = false;   
+            tagChanged = false;
         }
 
         async function onConnect() {
+            console.log('onConnect() - typeof plc.scan:', typeof plc.scan);
+            console.log('onConnect() - typeof plc.scan_rate:', typeof plc.scan_rate);
             createTags();
             connected = true;
             manageStatus('online');
@@ -214,14 +216,14 @@ module.exports = function (RED) {
             node.error(RED._("ethip.error.onerror") + errStr, {});
         }
 
-        
+
 
         // close the connection and remove tag listeners
         function onNodeClose(done) {
             manageStatus('offline');
             connected = false;
             closing = true;
-            
+
             for (let tag of tags.values()) {
                 tag.removeListener('Initialized', onTagChanged);
                 tag.removeListener('Changed', onTagChanged);
@@ -245,7 +247,7 @@ module.exports = function (RED) {
 
             plc.on("Error", onControllerError);
             plc.on("Connected", onConnect)
-            
+
         }
 
         node.on('close', onNodeClose);
@@ -277,7 +279,7 @@ module.exports = function (RED) {
             }
 
             if (config.includeTimestamp) {
-                object.timestamp = tag.timestamp_raw.getTime()/1000;
+                object.timestamp = tag.timestamp_raw.getTime() / 1000;
             }
 
             return object;
@@ -298,19 +300,19 @@ module.exports = function (RED) {
 
                 if (config.gatherMetrics) {
                     msg.error = {
-                    description: data,
-                    tag: key,
-                    topic: map
+                        description: data,
+                        tag: key,
+                        topic: map
                     };
                     if (config.includeTimestamp) {
-                        msg.error.timestamp = tag.timestamp_raw.getTime()/1000;
+                        msg.error.timestamp = tag.timestamp_raw.getTime() / 1000;
                     }
                 } else {
                     msg.error = data;
                     msg.tag = key;
                     msg.topic = map;
                     if (config.includeTimestamp) {
-                        msg.timestamp = tag.timestamp_raw.getTime()/1000;
+                        msg.timestamp = tag.timestamp_raw.getTime() / 1000;
                     }
                 }
 
@@ -333,7 +335,7 @@ module.exports = function (RED) {
                     topic: key,
                 }
                 if (config.includeTimestamp) {
-                    msg.timestamp = tag.timestamp_raw.getTime()/1000;
+                    msg.timestamp = tag.timestamp_raw.getTime() / 1000;
                 }
                 msg.lastValue = lastValue;
             }
@@ -352,7 +354,7 @@ module.exports = function (RED) {
                     payload[tag.name] = gatherTag(tag);
                 } else {
                     payload[tag.mapping || tag.name] = tag.value;
-                    timestamps[tag.mapping || tag.name] = tag.timestamp_raw.getTime()/1000.0;
+                    timestamps[tag.mapping || tag.name] = tag.timestamp_raw.getTime() / 1000.0;
                 }
             });
 
@@ -471,21 +473,21 @@ module.exports = function (RED) {
     RED.nodes.registerType("eth-ip out", EthIpOut);
 
     // PLC, Tag Browser
-    RED.httpAdmin.get("/eth-ip", RED.auth.needsPermission("eth-ip.read"), function(req,res) {
+    RED.httpAdmin.get("/eth-ip", RED.auth.needsPermission("eth-ip.read"), function (req, res) {
         res.json(browser.deviceList)
     });
 
     const browsedPLC = new Controller(false);
-    RED.httpAdmin.post("/eth-ip-tag", RED.auth.needsPermission("eth-ip.write"), function(req,res) {
+    RED.httpAdmin.post("/eth-ip-tag", RED.auth.needsPermission("eth-ip.write"), function (req, res) {
         browsedPLC.connect(req.body.plcAddress)
-        .then(() => {
-            res.json(browsedPLC.tagList);
-            browsedPLC.disconnect();
-        })
-        .catch(e => {
-            console.log(e);
-            browsedPLC.disconnect();
-        })
-    }); 
+            .then(() => {
+                res.json(browsedPLC.tagList);
+                browsedPLC.disconnect();
+            })
+            .catch(e => {
+                console.log(e);
+                browsedPLC.disconnect();
+            })
+    });
 
 };
